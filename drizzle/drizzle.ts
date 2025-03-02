@@ -6,11 +6,6 @@ import * as schema from './schema';
 dotenv.config();
 
 
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is required');
-}
-
-
 const pool = new pkg.Pool({
   connectionString: process.env.DATABASE_URL,  
 });

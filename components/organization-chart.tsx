@@ -156,6 +156,8 @@ const PositionDialog = ({ visible, onHide, mode, position, onSave, positions }: 
         return positions.some((p) => p.parentId === null);
     }
 
+
+
   return (
     <Dialog open={visible} onOpenChange={(open) => !open && onHide()}>
       <DialogContent>
@@ -208,7 +210,7 @@ const PositionDialog = ({ visible, onHide, mode, position, onSave, positions }: 
             </Select>
             <p className="text-sm text-gray-500">
               {positions.length === 0
-                ? "This will be the root position of your organization"
+                ? "This will be the root position "
                 : hasRootNode(positions) && !position?.parentId
                   ? "Only one root position is allowed. Please select a parent position."
                   : "Select a parent position to create a hierarchy"}
@@ -269,9 +271,7 @@ export default function OrganizationChartDemo() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const hasRootNode = (positions: Position[]): boolean => {
-    return positions.some((p) => p.parentId === null)
-  }
+ 
 
   useEffect(() => {
     fetchPositions()
@@ -478,7 +478,6 @@ export default function OrganizationChartDemo() {
     try {
       await positionsApi.delete(id)
       toast.success("Position deleted successfully")
-      // Refresh positions after deletion
       fetchPositions()
     } catch (error) {
       console.error(`Error deleting position ${id}:`, error)

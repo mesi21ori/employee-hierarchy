@@ -13,7 +13,7 @@ export const positionsRouter = (db: PostgresJsDatabase) => {
       if (!parentId) {
         const existingRootPosition = await db.select().from(positions).where(isNull(positions.parentId)).limit(1);
         if (existingRootPosition.length > 0) {
-          return c.json({ error: "A root position already exists. Only one root position is allowed." }, 400);
+          return c.json({ error: "A root position already exists." }, 400);
         }
       }
   
@@ -44,7 +44,7 @@ export const positionsRouter = (db: PostgresJsDatabase) => {
       if (!parentId) {
         const existingRootPosition = await db.select().from(positions).where(isNull(positions.parentId)).limit(1);
         if (existingRootPosition.length > 0 && existingRootPosition[0].id !== id) {
-          return c.json({ error: "A root position already exists. Only one root position is allowed." }, 400);
+          return c.json({ error: "A root position already exists." }, 400);
         }
       } else {
         const parentExists = await db.select().from(positions).where(eq(positions.id, parentId)).limit(1);
@@ -86,8 +86,7 @@ export const positionsRouter = (db: PostgresJsDatabase) => {
   router.get("/positions", async (c) => {
     try {
       const positionsList = await db.select().from(positions);
-
-      // Convert flat data into tree structure
+      
       const buildTree = (items: Position[], parentId: string | null = null): Position[] => {
         return items
           .filter((item) => item.parentId === parentId)
