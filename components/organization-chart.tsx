@@ -548,82 +548,86 @@ export default function OrganizationChartDemo() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <div className="relative flex items-center">
-            <Input
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.target.value)
-                if (e.target.value === "") {
-                  setTreeData(buildTree(positions))
-                  setSearchResults({ matches: [], parents: [], children: [] })
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch()
-                }
-              }}
-              placeholder="Search positions..."
-              className="pl-10 pr-[6.5rem] bg-secondary/80 border-secondary-foreground placeholder:text-secondary-foreground/50"
-            />
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search size={18} className="text-secondary-foreground/70" />
+      <div className="fixed top-0 left-0 right-0 bg-secondary border-b z-50 px-4 py-3 shadow-sm">
+        <div className="flex justify-between items-center gap-4 max-w-7xl mx-auto">
+          <div className="relative flex-1 max-w-md">
+            <div className="relative flex items-center">
+              <Input
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.target.value)
+                  if (e.target.value === "") {
+                    setTreeData(buildTree(positions))
+                    setSearchResults({ matches: [], parents: [], children: [] })
+                  }
+                }}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch()
+                  }
+                }}
+                placeholder="Search positions..."
+                className="pl-10 pr-[6.5rem] bg-secondary/80 border-secondary-foreground placeholder:text-secondary-foreground/50"
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <Search size={18} className="text-secondary-foreground/70" />
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="absolute right-[4.25rem] h-full px-2 py-2">
+                    {searchType === "node" ? "Node" : searchType === "parent" ? "Parent" : "Child"}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setSearchType("node")}>Node</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSearchType("parent")}>Parent</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setSearchType("child")}>Child</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button onClick={handleSearch} className="absolute right-0 rounded-l-none">
+                Search
+              </Button>
             </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="absolute right-[4.25rem] h-full px-2 py-2">
-                  {searchType === "node" ? "Node" : searchType === "parent" ? "Parent" : "Child"}
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setSearchType("node")}>Node</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSearchType("parent")}>Parent</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSearchType("child")}>Child</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button onClick={handleSearch} className="absolute right-0 rounded-l-none">
-              Search
+            {searchResults.matches.length > 0 && (
+              <div className="absolute right-0 top-full mt-2 mr-32 bg-popover text-popover-foreground rounded-md shadow-md p-2 text-sm z-50">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span>Match</span>
+                  </div>
+                  {searchType === "parent" && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-400" />
+                      <span>Parent</span>
+                    </div>
+                  )}
+                  {searchType === "child" && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full bg-green-400" />
+                      <span>Child</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={fetchPositions} variant="outline" className="shrink-0" disabled={isLoading}>
+              <RefreshCw size={16} className={`mr-1 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+            <Button onClick={handleAddPosition} className="shrink-0" disabled={isLoading}>
+              <Plus size={16} className="mr-1" />
+              Add position
             </Button>
           </div>
-          {searchResults.matches.length > 0 && (
-            <div className="absolute right-0 top-full mt-10 mr-32 bg-popover text-popover-foreground rounded-md shadow-md p-2 text-sm">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-primary" />
-                  <span>Match</span>
-                </div>
-                {searchType === "parent" && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-400" />
-                    <span>Parent</span>
-                  </div>
-                )}
-                {searchType === "child" && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-400" />
-                    <span>Child</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={fetchPositions} variant="outline" className="shrink-0" disabled={isLoading}>
-            <RefreshCw size={16} className={`mr-1 ${isLoading ? "animate-spin" : ""}`} />
-            Refresh
-          </Button>
-          <Button onClick={handleAddPosition} className="shrink-0" disabled={isLoading}>
-            <Plus size={16} className="mr-1" />
-            Add position
-          </Button>
         </div>
       </div>
 
-      <div className="p-4 bg-white rounded-lg shadow min-h-[300px] ">
+      <div className="h-16"></div>
+
+      <div className="p-4 bg rounded-lg bg-secondary/80 mt-4">
         {isLoading ? (
           <div className="flex items-center justify-center h-[300px]">
             <RefreshCw className="h-8 w-8 animate-spin text-primary" />
